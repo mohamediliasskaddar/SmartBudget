@@ -3,7 +3,7 @@ package com.example.smartbudget.ui.theme
 import androidx.compose.ui.graphics.Color
 
 
-
+//here are the colors i wanna use in my app
 //app Colors
 val indigoPrimary = Color(0xFF2E31E7)
 val blueAccent    = Color(0xFF4167FF)

@@ -81,5 +81,10 @@ dependencies {
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
-}
 
+    //Material icons
+    implementation("androidx.compose.material:material-icons-extended:1.6.7")
+
+    // Foundation (pour les LazyColumn, etc.)
+    implementation("androidx.compose.foundation:foundation:1.6.7")
+}
