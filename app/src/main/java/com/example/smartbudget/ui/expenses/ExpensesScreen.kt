@@ -1,4 +1,4 @@
-// ui/expenses/ExpensesScreen.kt  — VERSION COMPLÈTE (remplace le stub)
+// ui/expenses/ExpensesScreen.kt
 package com.example.smartbudget.ui.expenses
 
 import androidx.compose.foundation.layout.*
@@ -8,15 +8,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.smartbudget.SmartBudgetApp
-import com.example.smartbudget.ui.components.EmptyState
-import com.example.smartbudget.ui.components.CategoryPicker
-import com.example.smartbudget.ui.components.MonthNavigator
-import com.example.smartbudget.ui.components.TotalCard
+import com.example.smartbudget.data.local.entity.ExpenseEntity
+import com.example.smartbudget.ui.components.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,17 +28,23 @@ fun ExpensesScreen() {
     val state      by vm.uiState.collectAsState()
     val categories by vm.categories.collectAsState()
 
+    // null = fermé | ExpenseEntity vide = ajout | entity existante = édition
+    var sheetTarget  by remember { mutableStateOf<ExpenseEntity?>(null) }
     var showSheet    by remember { mutableStateOf(false) }
-    var editTarget   by remember { mutableStateOf<com.example.smartbudget.data.local.entity.ExpenseEntity?>(null) }
-    var deleteTarget by remember { mutableStateOf<com.example.smartbudget.data.local.entity.ExpenseEntity?>(null) }
+    var deleteTarget by remember { mutableStateOf<ExpenseEntity?>(null) }
 
-    // Carte catégorie rapide pour l'affichage de chaque item
     val catMap = categories.associateBy { it.id }
 
     Scaffold(
+        topBar = {
+            TopAppBar(title = { Text("SmartBudget") })
+        },
         floatingActionButton = {
-            FloatingActionButton(onClick = { editTarget = null; showSheet = true }) {
-                Icon(Icons.Default.Add, contentDescription = "Ajouter")
+            FloatingActionButton(onClick = {
+                sheetTarget = null   // mode ajout
+                showSheet   = true
+            }) {
+                Icon(Icons.Default.Add, contentDescription = "Ajouter une dépense")
             }
         }
     ) { padding ->
@@ -47,34 +53,49 @@ fun ExpensesScreen() {
                 .fillMaxSize()
                 .padding(padding)
         ) {
+            // Navigation mois
             MonthNavigator(
-                year      = state.year,
-                month     = state.month,
+                year       = state.year,
+                month      = state.month,
                 onPrevious = vm::previousMonth,
                 onNext     = vm::nextMonth,
-                modifier   = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                modifier   = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
 
+            // Total
             TotalCard(
                 total    = state.total,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 8.dp)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
+            // Filtre catégories
             CategoryPicker(
                 categories = categories,
                 selectedId = state.selectedCategoryId,
                 onSelect   = vm::filterByCategory
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            // Hint tap/long-press
+            if (state.expenses.isNotEmpty()) {
+                Text(
+                    text  = "Tap pour modifier · Appui long pour supprimer",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    modifier  = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                )
+            }
 
+            // Liste ou état vide
             if (state.expenses.isEmpty()) {
                 EmptyState()
             } else {
                 LazyColumn(
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                    contentPadding      = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(state.expenses, key = { it.id }) { expense ->
@@ -83,6 +104,10 @@ fun ExpensesScreen() {
                             expense      = expense,
                             categoryIcon = cat?.icon ?: "📦",
                             categoryName = cat?.name ?: "Autre",
+                            onClick      = {
+                                sheetTarget = expense   // mode édition
+                                showSheet   = true
+                            },
                             onLongClick  = { deleteTarget = expense }
                         )
                     }
@@ -91,22 +116,29 @@ fun ExpensesScreen() {
         }
     }
 
-    // Bottom sheet ajout / édition
+    // Sheet ajout / édition
     if (showSheet) {
         AddEditExpenseSheet(
-            initial    = editTarget,
+            initial    = sheetTarget,
             categories = categories,
-            onSave     = { e -> if (e.id == 0L) vm.addExpense(e) else vm.updateExpense(e) },
-            onDismiss  = { showSheet = false }
+            onSave     = { entity ->
+                if (entity.id == 0L) vm.addExpense(entity)
+                else                 vm.updateExpense(entity)
+            },
+            onDismiss  = { showSheet = false; sheetTarget = null }
         )
     }
 
-    // Dialog confirmation suppression
+    // Dialog suppression
     deleteTarget?.let { expense ->
         AlertDialog(
             onDismissRequest = { deleteTarget = null },
-            title   = { Text("Supprimer ?") },
-            text    = { Text("Cette dépense sera supprimée définitivement.") },
+            title   = { Text("Supprimer cette dépense ?") },
+            text    = {
+                val cat = catMap[expense.categoryId]
+                Text("${cat?.icon ?: ""} ${cat?.name ?: "Dépense"} · " +
+                        "%.2f MAD".format(expense.amount))
+            },
             confirmButton = {
                 TextButton(onClick = { vm.deleteExpense(expense); deleteTarget = null }) {
                     Text("Supprimer", color = MaterialTheme.colorScheme.error)

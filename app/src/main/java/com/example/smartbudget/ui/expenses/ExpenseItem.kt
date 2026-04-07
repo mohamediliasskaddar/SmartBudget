@@ -21,49 +21,69 @@ fun ExpenseItem(
     expense: ExpenseEntity,
     categoryIcon: String,
     categoryName: String,
-    onLongClick: () -> Unit,
+    onClick: () -> Unit,          // ouvre le sheet d'édition
+    onLongClick: () -> Unit,      // ouvre la confirmation de suppression
     modifier: Modifier = Modifier
 ) {
-    val sdf = SimpleDateFormat("dd MMM", Locale.getDefault())
+    val sdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .combinedClickable(onClick = {}, onLongClick = onLongClick),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            .combinedClickable(
+                onClick     = onClick,
+                onLongClick = onLongClick
+            ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = categoryIcon, style = MaterialTheme.typography.titleLarge)
+            // Icône catégorie
+            Surface(
+                shape = MaterialTheme.shapes.small,
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                modifier = Modifier.size(44.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(categoryIcon, style = MaterialTheme.typography.titleMedium)
+                }
+            }
+
             Spacer(modifier = Modifier.width(12.dp))
+
+            // Nom catégorie + note
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text  = categoryName,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text       = categoryName,
+                    style      = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium
                 )
                 if (expense.note.isNotBlank()) {
                     Text(
                         text  = expense.note,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1
                     )
                 }
-            }
-            Column(horizontalAlignment = Alignment.End) {
-                Text(
-                    text  = CurrencyUtils.format(expense.amount, expense.currency),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
                 Text(
                     text  = sdf.format(Date(expense.date)),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+
+            // Montant
+            Text(
+                text       = CurrencyUtils.format(expense.amount, expense.currency),
+                style      = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                color      = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }
