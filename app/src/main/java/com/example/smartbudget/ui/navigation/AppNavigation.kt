@@ -11,6 +11,7 @@ import com.example.smartbudget.ui.stats.StatsScreen
 import com.example.smartbudget.ui.settings.SettingsScreen
 
 sealed class Screen(val route: String) {
+    object Welcome : Screen("welcome")
     object Expenses : Screen("expenses")
     object Stats    : Screen("stats")
     object Settings : Screen("settings")
@@ -23,7 +24,7 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Expenses.route,
+        startDestination = Screen.Welcome.route,
         modifier = modifier
     ) {
         composable(Screen.Expenses.route) { ExpensesScreen() }
