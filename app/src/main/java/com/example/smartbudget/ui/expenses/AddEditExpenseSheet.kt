@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
@@ -147,7 +148,53 @@ fun AddEditExpenseSheet(
                 maxLines = 2,
                 modifier = Modifier.fillMaxWidth()
             )
+// Après le champ Note, avant le bouton :
 
+// Méthode de paiement
+            var paymentExpanded by remember { mutableStateOf(false) }
+            val paymentOptions  = listOf("CASH" to "💵 Espèces", "CARD" to "💳 Carte", "TRANSFER" to "🏦 Virement")
+            var selectedPayment by remember { mutableStateOf(initial?.paymentMethod ?: "CASH") }
+
+            ExposedDropdownMenuBox(
+                expanded = paymentExpanded,
+                onExpandedChange = { paymentExpanded = !paymentExpanded }
+            ) {
+                OutlinedTextField(
+                    value    = paymentOptions.find { it.first == selectedPayment }?.second ?: "💵 Espèces",
+                    onValueChange = {},
+                    readOnly = true,
+                    label    = { Text("Méthode de paiement") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(paymentExpanded) },
+                    modifier = Modifier.fillMaxWidth().menuAnchor()
+                )
+                ExposedDropdownMenu(
+                    expanded = paymentExpanded,
+                    onDismissRequest = { paymentExpanded = false }
+                ) {
+                    paymentOptions.forEach { (key, label) ->
+                        DropdownMenuItem(
+                            text    = { Text(label) },
+                            onClick = { selectedPayment = key; paymentExpanded = false }
+                        )
+                    }
+                }
+            }
+
+// Toggle dépense récurrente
+            var isRecurring by remember { mutableStateOf(initial?.isRecurring ?: false) }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment     = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text("Dépense récurrente", style = MaterialTheme.typography.bodyMedium)
+                    Text("Se répète chaque mois", style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                Switch(checked = isRecurring, onCheckedChange = { isRecurring = it })
+            }
             // Bouton
             Button(
                 onClick = {
@@ -163,7 +210,9 @@ fun AddEditExpenseSheet(
                             categoryId = selectedCat,
                             date       = selectedDate,
                             note       = note.trim(),
-                            updatedAt  = System.currentTimeMillis()
+                            updatedAt  = System.currentTimeMillis(),
+                            paymentMethod = selectedPayment,
+                            isRecurring = isRecurring
                         )
                     } else {
                         ExpenseEntity(

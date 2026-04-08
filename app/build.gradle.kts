@@ -87,4 +87,8 @@ dependencies {
 
     // Foundation (pour les LazyColumn, etc.)
     implementation("androidx.compose.foundation:foundation:1.6.7")
+
+    // Graphes
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
 }

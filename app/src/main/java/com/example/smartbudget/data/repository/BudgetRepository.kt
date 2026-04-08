@@ -14,4 +14,7 @@ class BudgetRepository(private val dao: MonthlyBudgetDao) {
     suspend fun upsertBudget(budget: MonthlyBudgetEntity) = dao.insert(budget)
 
     suspend fun deleteBudget(budget: MonthlyBudgetEntity) = dao.delete(budget)
+
+    suspend fun getBudgetForCategory(year: Int, month: Int, categoryId: Long): MonthlyBudgetEntity? =
+        dao.getBudgetForCategory(DateUtils.toMonthKey(year, month), categoryId)
 }

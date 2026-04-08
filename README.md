@@ -9,6 +9,24 @@ Créer une application Android *offline-first* de gestion de budget personnel qu
 
 </aside>
 
+## TO DO:
+```
+-[] charts colors
+-[] bg
+-[] settings update
+-[] 
+```
+
+PQ:
+dev file i need to merge into main:
+smartbudget/MainActivity.kt
+smartbudget/ui/navigation/AppNavigation.kt
+smartbudget/ui/welcome/WelcomeScreen.kt (new file that deonst exit on main)
+app/src/main/res/drawable/welcome.png (pics was renamed fom landing.png to welcome.png)
+
+
+
+
 ### 1) Contexte & besoin
 
 De nombreux étudiants gèrent des dépenses récurrentes (transport, repas, loisirs) sans visibilité claire.
