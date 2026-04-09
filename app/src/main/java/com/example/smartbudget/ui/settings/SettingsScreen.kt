@@ -18,6 +18,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.smartbudget.SmartBudgetApp
+import com.example.smartbudget.ui.components.BackgroundImage
+import com.example.smartbudget.ui.theme.indigoPrimary
+import com.example.smartbudget.ui.theme.white
 
 @Composable
 fun SettingsScreen() {
@@ -48,14 +51,15 @@ fun SettingsScreen() {
     }
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
-        LazyColumn(
-            modifier            = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding      = PaddingValues(vertical = 16.dp)
-        ) {
+        BackgroundImage {
+            LazyColumn(
+                modifier            = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding      = PaddingValues(vertical = 16.dp)
+            ) {
 
             // ── Section Export / Import ─────────────────────────
             item {
@@ -63,7 +67,13 @@ fun SettingsScreen() {
             }
 
             item {
-                Card(modifier = Modifier.fillMaxWidth()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    )
+                ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -71,7 +81,11 @@ fun SettingsScreen() {
                         // Export
                         Button(
                             onClick  = { vm.exportCurrentMonth(context) },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = indigoPrimary,
+                                contentColor = white
+                            )
                         ) {
                             Icon(Icons.Default.Upload,
                                 contentDescription = null,
@@ -102,7 +116,13 @@ fun SettingsScreen() {
             }
 
             items(categories) { cat ->
-                Card(modifier = Modifier.fillMaxWidth()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    )
+                ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -134,6 +154,7 @@ fun SettingsScreen() {
                         )
                     }
                 }
+            }
             }
         }
     }

@@ -10,7 +10,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.automirrored.filled.List
+import com.example.smartbudget.ui.theme.indigoPrimary
+import com.example.smartbudget.ui.theme.skyBlue
+import com.example.smartbudget.ui.theme.white
 
 data class NavItem(val screen: Screen, val label: String, val icon: @Composable () -> Unit)
 
@@ -18,7 +21,7 @@ data class NavItem(val screen: Screen, val label: String, val icon: @Composable 
 fun BottomNavBar(navController: NavController) {
     val items = listOf(
         NavItem(Screen.Expenses, "Dépenses") {
-            Icon(Icons.Default.List, contentDescription = null)
+            Icon(Icons.AutoMirrored.Default.List, contentDescription = null)
         },
         NavItem(Screen.Stats, "Stats") {
             Icon(Icons.Default.PieChart, contentDescription = null)
@@ -31,12 +34,22 @@ fun BottomNavBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    NavigationBar {
+    NavigationBar(
+        containerColor = white,
+        contentColor = indigoPrimary
+    ) {
         items.forEach { item ->
             NavigationBarItem(
                 icon    = item.icon,
                 label   = { Text(item.label) },
                 selected = currentRoute == item.screen.route,
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = indigoPrimary,
+                    selectedTextColor = indigoPrimary,
+                    indicatorColor = indigoPrimary.copy(alpha = 0.7f),
+                    unselectedIconColor = skyBlue,
+                    unselectedTextColor = skyBlue
+                ),
                 onClick  = {
                     navController.navigate(item.screen.route) {
                         popUpTo(navController.graph.startDestinationId) { saveState = true }

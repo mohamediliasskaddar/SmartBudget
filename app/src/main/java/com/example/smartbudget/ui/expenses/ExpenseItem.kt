@@ -11,6 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.smartbudget.data.local.entity.ExpenseEntity
+import com.example.smartbudget.ui.theme.indigoPrimary
+import com.example.smartbudget.ui.theme.skyBlue
+import com.example.smartbudget.ui.theme.white
 import com.example.smartbudget.util.CurrencyUtils
 import java.text.SimpleDateFormat
 import java.util.*
@@ -34,7 +37,10 @@ fun ExpenseItem(
                 onClick     = onClick,
                 onLongClick = onLongClick
             ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = white
+        )
     ) {
         Row(
             modifier = Modifier
@@ -45,7 +51,7 @@ fun ExpenseItem(
             // Icône catégorie
             Surface(
                 shape = MaterialTheme.shapes.small,
-                color = MaterialTheme.colorScheme.secondaryContainer,
+                color = skyBlue,
                 modifier = Modifier.size(44.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
@@ -82,7 +88,7 @@ fun ExpenseItem(
                 text       = CurrencyUtils.format(expense.amount, expense.currency),
                 style      = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
-                color      = MaterialTheme.colorScheme.primary
+                color      = indigoPrimary
             )
         }
     }

@@ -21,8 +21,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.smartbudget.SmartBudgetApp
+import com.example.smartbudget.ui.components.BackgroundImage
 import com.example.smartbudget.ui.components.MonthNavigator
 import com.example.smartbudget.ui.components.TotalCard
+import com.example.smartbudget.ui.theme.ChartColors
+import com.example.smartbudget.ui.theme.indigoPrimary
+import com.example.smartbudget.ui.theme.white
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.PercentFormatter
@@ -46,31 +50,32 @@ fun StatsScreen() {
     var budgetInput     by remember { mutableStateOf("") }
     var budgetInputError by remember { mutableStateOf(false) }
 
-    LazyColumn(
-        modifier            = Modifier.fillMaxSize(),
-        contentPadding      = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
+    BackgroundImage {
+        LazyColumn(
+            modifier            = Modifier
+                .fillMaxSize(),
+            contentPadding      = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item {
+                MonthNavigator(
+                    year       = state.year,
+                    month      = state.month,
+                    onPrevious = vm::previousMonth,
+                    onNext     = vm::nextMonth
+                )
+            }
 
-        // Navigation mois
-        item {
-            MonthNavigator(
-                year       = state.year,
-                month      = state.month,
-                onPrevious = vm::previousMonth,
-                onNext     = vm::nextMonth
-            )
-        }
-
-        // Total
-        item { TotalCard(total = state.total) }
+            // Total
+            item { TotalCard(total = state.total) }
 
         // Top catégorie
         state.topCategory?.let { top ->
             item {
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        containerColor = indigoPrimary.copy(alpha = 0.7f),
+                        contentColor = white
                     )
                 ) {
                     Row(
@@ -106,10 +111,14 @@ fun StatsScreen() {
                     fontWeight = FontWeight.SemiBold)
 
                 val sliceColors = listOf(
-                    Color.parseColor("#FF5722"), Color.parseColor("#2196F3"),
-                    Color.parseColor("#4CAF50"), Color.parseColor("#FF9800"),
-                    Color.parseColor("#9C27B0"), Color.parseColor("#00BCD4"),
-                    Color.parseColor("#607D8B"), Color.parseColor("#E91E63")
+                    ChartColors.santeColor.toArgb(),
+                    ChartColors.transportColor.toArgb(),
+                    ChartColors.etudeColor.toArgb(),
+                    ChartColors.alimentationColor.toArgb(),
+                    ChartColors.loisirColor.toArgb(),
+                    ChartColors.logementColor.toArgb(),
+                    ChartColors.autreColor.toArgb(),
+                    Color.parseColor("#9575CD")
                 )
 
                 AndroidView(
@@ -132,14 +141,14 @@ fun StatsScreen() {
                         }
                     },
                     update = { chart ->
-                        val entries = state.statsByCategory.mapIndexed { i, s ->
+                        val entries = state.statsByCategory.mapIndexed { _, s ->
                             PieEntry(s.total.toFloat(), "${s.categoryIcon} ${s.categoryName}")
                         }
-                        val colors = state.statsByCategory.mapIndexed { i, _ ->
+                        val colors = state.statsByCategory.indices.map { i ->
                             sliceColors[i % sliceColors.size]
                         }
                         val dataSet = PieDataSet(entries, "").apply {
-                            setColors(colors)
+                            setColors(*colors.toIntArray())
                             valueTextColor = Color.WHITE
                             valueTextSize  = 12f
                             sliceSpace     = 2f
@@ -276,6 +285,7 @@ fun StatsScreen() {
                     }
                 }
             }
+        }
         }
     }
 

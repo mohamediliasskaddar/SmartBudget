@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.smartbudget.ui.theme.white
 import java.text.DateFormatSymbols
 
 @Composable
@@ -29,15 +30,26 @@ fun MonthNavigator(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        IconButton(onClick = onPrevious) {
+        IconButton(
+            onClick = onPrevious,
+            colors = IconButtonDefaults.iconButtonColors(
+                contentColor = white
+            )
+        ) {
             Icon(Icons.Default.ChevronLeft, contentDescription = "Mois précédent")
         }
         Text(
             text = "$monthName $year",
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            color = white
         )
-        IconButton(onClick = onNext) {
+        IconButton(
+            onClick = onNext,
+            colors = IconButtonDefaults.iconButtonColors(
+                contentColor = white
+            )
+        ) {
             Icon(Icons.Default.ChevronRight, contentDescription = "Mois suivant")
         }
     }
