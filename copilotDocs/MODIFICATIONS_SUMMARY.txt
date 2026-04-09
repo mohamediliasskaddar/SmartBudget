@@ -1,0 +1,38 @@
+## Modifications Effectuées - Barre de Navigation et Modal Global
+
+### Fichier: BottomNavBar.kt
+**Changements principaux:**
+- Ajout du paramètre `onAddClick: () -> Unit` à la fonction composable
+- Restructuration de la barre de navigation pour afficher 4 boutons (Dépenses, Stats, Paramètres, Guide)
+- Ajout d'un bouton central flottant (+) qui déclenche la modal d'ajout/édition
+- Utilisation de `Row` avec `weight` pour organiser les boutons: 2 à gauche, 1 bouton central, 2 à droite
+- Tous les couleurs utilisent les définitions de Color.kt (indigoPrimary, skyBlue, white)
+
+### Fichier: ApplicationGuide.kt (Nouveau)
+**Contenu créé:**
+- Nouvelle page "Guide" affichant 6 sections d'aide avec exemples de texte
+- Chaque section explique une fonctionnalité de l'app
+- Utilise le même thème de fond (BackgroundImage) que les autres écrans
+- Couleurs cohérentes: indigoPrimary pour les titres, white pour le texte
+- Format: titre + contenu informatif pour chaque section
+
+### Fichier: AppNavigation.kt
+**Changements principaux:**
+- Ajout d'une nouvelle route `Screen.Guide` avec route "guide"
+- Ajout du composable pour `ApplicationGuide()` dans la navigation
+
+### Fichier: MainActivity.kt
+**Changements principaux:**
+- Ajout d'une gestion d'état global pour la modal: `showAddSheet` et `sheetTarget`
+- Instanciation du `ExpensesViewModel` au niveau de MainActivity pour accès global
+- Modification de `BottomNavBar` pour passer le callback `onAddClick`
+- Ajout de la modal `AddEditExpenseSheet` en tant que couche overlay globale
+- La modal s'affiche devant l'écran actuel (qui reste visible mais inactif)
+
+### Fichier: ExpensesScreen.kt
+**Changements principaux:**
+- Suppression de la modale d'ajout/édition locale (déplacée à MainActivity)
+- Suppression du bouton FloatingActionButton (remplacé par le bouton central de la nav bar)
+- Conservation du dialogue de suppression (fonctionne toujours localement)
+- L'écran reste fonctionnel pour voir et supprimer les dépenses
+

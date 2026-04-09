@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.smartbudget.ui.expenses.ExpensesScreen
+import com.example.smartbudget.ui.guide.ApplicationGuide
 import com.example.smartbudget.ui.stats.StatsScreen
 import com.example.smartbudget.ui.settings.SettingsScreen
 import com.example.smartbudget.ui.welcome.WelcomeScreen
@@ -16,6 +17,7 @@ sealed class Screen(val route: String) {
     object Expenses : Screen("expenses")
     object Stats    : Screen("stats")
     object Settings : Screen("settings")
+    object Guide    : Screen("guide")
 }
 
 @Composable
@@ -32,5 +34,6 @@ fun AppNavHost(
         composable(Screen.Expenses.route) { ExpensesScreen() }
         composable(Screen.Stats.route)    { StatsScreen() }
         composable(Screen.Settings.route) { SettingsScreen() }
+        composable(Screen.Guide.route)    { ApplicationGuide() }
     }
 }

@@ -5,11 +5,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.smartbudget.data.local.entity.CategoryEntity
-import com.example.smartbudget.ui.theme.indigoPrimary
-import com.example.smartbudget.ui.theme.skyBlue
-import com.example.smartbudget.ui.theme.white
+import com.example.smartbudget.ui.theme.*
 
 @Composable
 fun CategoryChip(
@@ -21,13 +22,29 @@ fun CategoryChip(
     FilterChip(
         selected = isSelected,
         onClick  = onClick,
-        label    = { Text("${category.icon} ${category.name}") },
+        label    = {
+            Text(
+                text       = "${category.icon} ${category.name}",
+                fontSize   = 13.sp,
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+            )
+        },
         modifier = modifier.padding(end = 6.dp),
-        colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = indigoPrimary,
-            selectedLabelColor = white,
-            containerColor = skyBlue.copy(alpha = 0.2f),
-            labelColor = indigoPrimary
+        colors   = FilterChipDefaults.filterChipColors(
+            // Chip sélectionné : indigo plein
+            selectedContainerColor  = indigoPrimary,
+            selectedLabelColor      = white,
+            // Chip non sélectionné : glassmorphism sur le bg bleu
+            containerColor          = surfaceGlass,
+            labelColor              = Color.Gray
+        ),
+        border = FilterChipDefaults.filterChipBorder(
+            enabled              = true,
+            selected             = isSelected,
+            borderColor          = white.copy(alpha = 0.30f),
+            selectedBorderColor  = indigoPrimary,
+            borderWidth          = 1.dp,
+            selectedBorderWidth  = 0.dp
         )
     )
 }

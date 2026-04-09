@@ -45,11 +45,12 @@ fun WelcomeScreen(navController: NavController) {
         )
 
         // 🌑 Overlay sombre (important pour lisibilité)
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.4f))
-        )
+       //style :  clean UI to match Figma templates
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .background(Color.Black.copy(alpha = 0.4f))
+//        )
 
         // 🔘 Contenu (texte + bouton)
         Column(
