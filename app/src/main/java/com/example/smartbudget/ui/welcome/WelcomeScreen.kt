@@ -36,7 +36,6 @@ import com.example.smartbudget.ui.theme.blueAccent
 fun WelcomeScreen(navController: NavController) {
     Box(modifier = Modifier.fillMaxSize()) {
 
-        // 🖼️ Background image
         Image(
             painter = painterResource(id = R.drawable.welcome),
             contentDescription = null,
@@ -44,17 +43,9 @@ fun WelcomeScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize()
         )
 
-        // 🌑 Overlay sombre (important pour lisibilité)
-       //style :  clean UI to match Figma templates
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .background(Color.Black.copy(alpha = 0.4f))
-//        )
 
-        // 🔘 Contenu (texte + bouton)
+
         Column(
-//            verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(24.dp),
@@ -64,7 +55,6 @@ fun WelcomeScreen(navController: NavController) {
 
         ) {
             Text(
-//                text = "It isn’t what you earn but how you spend it that fixes your class",
                 text = "Ce n’est pas ce que vous gagnez, mais la façon dont vous le dépensez qui détermine votre classe",
                 color = Color.White,
                 textAlign = TextAlign.Center,
@@ -77,7 +67,6 @@ fun WelcomeScreen(navController: NavController) {
                     .fillMaxWidth()
                     .padding(bottom = 120.dp)
                     .clip(RoundedCornerShape(16.dp))
-//                    .background(blueAccent)
                     .border(
                         width = 2.dp,
                         color = Color.White,
@@ -86,7 +75,6 @@ fun WelcomeScreen(navController: NavController) {
                     .padding(16.dp)                 
             )
 
-            // 🔘 Button
             Button(
                 onClick = {
                     navController.navigate(Screen.Expenses.route) {

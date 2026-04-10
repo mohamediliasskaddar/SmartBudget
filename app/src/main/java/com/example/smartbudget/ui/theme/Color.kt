@@ -14,15 +14,15 @@ val skyBlueDark     = Color(0xFF1A9ED4)
 
 // Surfaces & fonds
 val surfaceWhite    = Color(0xFFFFFFFF)
-val surfaceCard     = Color(0xF2FFFFFF)   // blanc 95% opaque pour cartes sur bg
-val surfaceGlass    = Color(0x26FFFFFF)   // blanc 15% — effet glassmorphism
+val surfaceCard     = Color(0xF2FFFFFF)
+val surfaceGlass    = Color(0x26FFFFFF)
 
-val textPrimary     = Color(0xFF0D0F3D)   // indigo très sombre
+val textPrimary     = Color(0xFF0D0F3D)
 val textSecondary   = Color(0xFF4A4C7A)
 val textOnDark      = Color(0xFFFFFFFF)
-val textOnDarkSub   = Color(0xCCFFFFFF)   // blanc 80%
+val textOnDarkSub   = Color(0xCCFFFFFF)
 
-val divider         = Color(0x1A2E31E7)   // indigo 10%
+val divider         = Color(0x1A2E31E7)
 
 val errorRed        = Color(0xFFE53935)
 val successGreen    = Color(0xFF43A047)

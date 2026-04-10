@@ -22,7 +22,6 @@ fun BackgroundImage(
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        // Image de fond
         Image(
             painter            = painterResource(id = R.drawable.bg1),
             contentDescription = null,
@@ -30,7 +29,6 @@ fun BackgroundImage(
             modifier           = Modifier.fillMaxSize()
         )
 
-        // Fondu bas → sky blue pour transition douce vers le contenu scrollable
         Box(
             modifier = Modifier
                 .fillMaxWidth()

@@ -1,155 +1,213 @@
-# Mini‑projet Android  — SmartBudget
+# 💰 SmartBudget
 
-<aside>
-🎯
+> Application Android native de gestion de budget personnel — **offline-first**
 
-**Objectif métier**
+![Android](https://img.shields.io/badge/Android-API%2026%2B-3DDC84?logo=android&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-1.9.x-7F52FF?logo=kotlin&logoColor=white)
+![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-2024-4285F4?logo=jetpackcompose&logoColor=white)
+![Room](https://img.shields.io/badge/Room-2.8.4-FF6F00)
+![License](https://img.shields.io/badge/Licence-MIT-blue)
 
-Créer une application Android *offline-first* de gestion de budget personnel qui permet de **suivre ses dépenses**, **comprendre où part l’argent** (par catégorie / période), et **exporter** ses données pour un usage externe.
+---
 
-</aside>
+##  Aperçu
 
-## TO DO:
+SmartBudget permet aux étudiants et jeunes actifs de **suivre leurs dépenses quotidiennes** de manière simple, rapide et entièrement hors-ligne.
+[Voir toutes les captures d’écran](#captures-decran)
+
+![Alt text](./screenshots/ui.png)
+
+---
+
+##  Fonctionnalités
+
+### Principales : (statut : terminées)
+- ✅ **CRUD complet** — Ajouter, modifier (tap), supprimer (appui long) une dépense
+- ✅ **Catégorisation** — 7 catégories avec icône emoji (Alimentation, Transport, Logement…)
+- ✅ **Navigation mensuelle** — Vue par mois avec boutons précédent / suivant
+- ✅ **Filtrage** — Filtre par catégorie via chips horizontaux
+- ✅ **Total du mois** — Carte récapitulative visible sur tous les écrans
+- ✅ **Statistiques** — Camembert de répartition + classement par catégorie
+- ✅ **Offline-first** — Aucune connexion internet requise
+
+### Bonus : (statut : terminées)
+- [x] **Budgets mensuels** — Limite par catégorie avec barre de progression et alerte dépassement
+- [x] **Dépenses récurrentes** — Toggle pour marquer une dépense mensuelle automatique
+- [x] **Export CSV** — Partage du mois courant via l'intent Android
+- [x] **Import CSV** — Import de dépenses depuis un fichier externe
+
+---
+
+##  Architecture
+
 ```
--[] charts colors
--[] bg
--[] settings update
--[] 
+SmartBudget/
+├── data
+│   ├── local
+│   │   ├── dao
+│   │   ├── entity
+│   │   └── SmartBudgetDatabase.kt
+│   ├── model
+│   │   ├── Category.kt
+│   │   ├── CategoryStats.kt
+│   │   ├── Expense.kt
+│   │   └── MonthlyBudget.kt
+│   └── repository
+│       ├── BudgetRepository.kt
+│       ├── CategoryRepository.kt
+│       └── ExpenseRepository.kt
+├── di
+│   ├── DatabaseModule.kt
+│   └── RepositoryModule.kt
+├── domain
+│   └── usecase
+│       ├── AddExpense.kt
+│       ├── DeleteExpense.kt
+│       ├── ExportMonthCsv.kt
+│       ├── GetCategories.kt
+│       ├── GetExpensesByMonth.kt
+│       ├── GetMonthStats.kt
+│       └── UpdateExpense.kt
+├── ui
+│   ├── components
+│   │   ├── BackgroundImage.kt
+│   │   ├── CategoryChip.kt
+│   │   ├── CategoryPicker.kt
+│   │   ├── EmptyState.kt
+│   │   ├── MonthNavigator.kt
+│   │   └── TotalCard.kt
+│   ├── expenses
+│   │   ├── AddEditExpenseSheet.kt
+│   │   ├── ExpenseItem.kt
+│   │   ├── ExpensesScreen.kt
+│   │   └── ExpensesViewModel.kt
+│   ├── guide
+│   │   └── ApplicationGuide.kt
+│   ├── navigation
+│   │   ├── AppNavigation.kt
+│   │   └── BottomNavBar.kt
+│   ├── settings
+│   │   ├── SettingsScreen.kt
+│   │   └── SettingsViewModel.kt
+│   ├── stats
+│   │   ├── StatsScreen.kt
+│   │   └── StatsViewModel.kt
+│   ├── theme
+│   │   ├── Color.kt
+│   │   ├── Theme.kt
+│   │   └── Type.kt
+│   └── welcome
+│       └── WelcomeScreen.kt
+├── util
+│   ├── CsvExporter.kt
+│   ├── CsvImporter.kt
+│   ├── CurrencyUtils.kt
+│   └── DateUtils.kt
+├── AppDatabase.kt
+├── MainActivity.kt
+├── SmartBudgetApp.kt
+└── init.sh   
 ```
 
-PQ:
-dev file i need to merge into main:
-smartbudget/MainActivity.kt
-smartbudget/ui/navigation/AppNavigation.kt
-smartbudget/ui/welcome/WelcomeScreen.kt (new file that deonst exit on main)
-app/src/main/res/drawable/welcome.png (pics was renamed fom landing.png to welcome.png)
+Pattern : **MVVM + Clean Architecture**
+
+```
+UI (Compose) ──→ ViewModel ──→ UseCase ──→ Repository ──→ Room (SQLite)
+                    ↑                           ↓
+                 StateFlow               Flow<List<Entity>>
+```
+
+---
+
+##  Stack technique
+
+| Composant | Technologie | Version |
+|-----------|-------------|---------|
+| Langage | Kotlin | 1.9.x |
+| UI | Jetpack Compose | BOM 2024 |
+| Base de données | Room (SQLite) | 2.8.4 |
+| Navigation | Navigation Compose | 2.7.7 |
+| ViewModel | Lifecycle ViewModel Compose | 2.8.0 |
+| Async | Kotlinx Coroutines + Flow | 1.7.3 |
+| Graphiques | MPAndroidChart (PhilJay) | 3.1.0 |
+| Build | Gradle KTS + KSP | — |
+| Min SDK | Android 8.0 (Oreo) | API 26 |
+| Target SDK | Android 14 | API 34 |
 
 
+---
+##  Modèle de données
 
+```
+CategoryEntity (1) ──< ExpenseEntity (N)
+CategoryEntity (1) ──< MonthlyBudgetEntity (N)
+```
 
-### 1) Contexte & besoin
+- Suppression catégorie **interdite** si des dépenses existent (`RESTRICT`)
+- Budget mensuel : suppression en `CASCADE`
 
-De nombreux étudiants gèrent des dépenses récurrentes (transport, repas, loisirs) sans visibilité claire.
+---
 
-L’application **SmartBudget** sert de carnet de dépenses structuré : on enregistre une dépense en quelques secondes, puis on consulte des totaux et répartitions par mois.
+##  Règles métier
 
-### 2) Périmètre fonctionnel (côté métier)
+- Montant strictement **positif**
+- Date **obligatoire**
+- Catégorie **obligatoire**
+- Nom de catégorie **unique**
+- Barre budget : 🟡 orange à 80%, 🔴 rouge si dépassement
 
-#### Fonctionnalités principales (obligatoires)
+---
+##  Installation
 
-- **Gestion des dépenses (CRUD)**
-    - Ajouter une dépense
-    - Modifier une dépense
-    - Supprimer une dépense (avec confirmation)
-- **Catégorisation**
-    - Associer chaque dépense à une catégorie métier (ex : Alimentation, Transport, Logement, Santé, Loisirs, Études, Autre)
-- **Filtrage temporel**
-    - Vue par **mois** (ex : mars 2026)
-    - Navigation mois précédent/suivant
-- **Synthèse**
-    - Total des dépenses du mois
-    - Total par catégorie (répartition)
-    - Top catégories du mois
-- **Offline-first**
-    - Toutes les opérations fonctionnent **sans internet**
+### Prérequis
+- Android Studio Hedgehog (2023.1.1) ou supérieur
+- JDK 17
+- Android SDK API 26+
 
-#### Options métier (bonus)
+### Cloner & lancer
 
-- **Budgets mensuels par catégorie** (ex : Transport = 300 MAD)
-- **Dépenses récurrentes** (abonnement, loyer)
-- **Export CSV** du mois
-- **Import** (rejouer un CSV simple)
+```bash
+git clone https://github.com/mohamediliasskaddar/SmartBudget.git
 
-### 3) Modèles de données (proposition)
+cd SmartBudget
+```
 
-> Les modèles sont décrits “métier” d’abord, puis vous pouvez les mapper en Room (Entities + Relations).
->
+Ouvrir le projet dans **Android Studio** puis :
 
-#### A) Dépense (Expense)
+```
+File → Sync Project with Gradle Files
+Run → Run 'app'
+```
 
-- **id** : identifiant
-- **amount** : montant (ex : 45.50)
-- **currency** : devise (par défaut MAD)
-- **date** : date de la dépense
-- **categoryId** : référence catégorie
-- **note** : note libre (facultatif)
-- **paymentMethod** : espèce / carte / virement (optionnel)
-- **createdAt** : date de création
-- **updatedAt** : date de dernière modification
+Et dans `settings.gradle.kts` :
 
-#### B) Catégorie (Category)
+```kotlin
+maven { url = uri("https://jitpack.io") }  // pour MPAndroidChart
+```
 
-- **id**
-- **name** (unique) : Alimentation, Transport…
-- **icon** : emoji ou nom d’icône
-- **color** : couleur UI (string)
-- **isActive** : bool (permet d’archiver)
+---
+## Captures d'écran
+![Alt text](./screenshots/frames.png)
 
-#### C) (Bonus) Budget mensuel par catégorie (MonthlyBudget)
+##  Contribution
 
-- **id**
-- **month** : AAAA-MM
-- **categoryId**
-- **limitAmount** : montant limite
+Les contributions sont les bienvenues !
 
-### 4) Règles métier & validations
+1. Fork le projet
+2. Crée une branche (`git checkout -b feature/ma-fonctionnalite`)
+3. Commit tes changements (`git commit -m 'feat: ajoute X'`)
+4. Push la branche (`git push origin feature/ma-fonctionnalite`)
+5. Ouvre une Pull Request
 
-- Montant **strictement positif**
-- Date obligatoire
-- Catégorie obligatoire
-- Une catégorie a un nom **unique**
-- Suppression d’une catégorie :
-    - soit interdite si des dépenses existent
-    - soit autorisée avec bascule des dépenses vers “Autre”
+---
 
-### 5) Vue globale de l’UI (maquette fonctionnelle)
+##  Licence
 
-<aside>
-🧭
+Ce projet est sous licence **MIT** — contacter [Mohamed Iliass Kaddar](mailto:moahmediliassk@gmail.com). pour plus de détails.
 
-**Navigation proposée (simple et pédagogique)**
+---
 
-- Onglets (Bottom bar) : **Dépenses** | **Stats** | **Paramètres**
-- Écrans modaux : **Ajouter / Modifier dépense**
-</aside>
-
-#### Écran 1 — Dépenses (liste)
-
-- En-tête : Mois courant + boutons ◀ ▶
-- Carte “Total du mois”
-- Filtres : catégorie (dropdown/chips) + tri (date / montant)
-- Liste des dépenses : item = montant + catégorie + date + note
-- Action principale : bouton “+” (ajouter)
-- États UX :
-    - vide (aucune dépense)
-    - recherche/filtre sans résultat
-
-#### Écran 2 — Ajouter / Modifier une dépense (formulaire)
-
-- Champs : Montant, Catégorie, Date, Note, (Méthode paiement)
-- Bouton : Enregistrer
-- Erreurs inline (montant, date)
-
-#### Écran 3 — Statistiques
-
-- Total du mois
-- Répartition par catégorie (liste triée décroissante)
-- Top catégories
-- (Bonus) comparaison mois N vs mois N-1
-
-#### Écran 4 — Paramètres
-
-- Gestion des catégories (activer/désactiver)
-- Choix devise
-- Export CSV (bonus)
-
-### 6) Jeux de données de test (pour la démo)
-
-- Au moins 30 dépenses réparties sur 2 mois
-- 6 à 8 catégories actives
-
-### 7) Critères de réussite (résultat attendu)
-
-- L’app permet de suivre un mois complet, filtrer, modifier, supprimer sans crash
-- Les stats donnent une lecture claire des “postes de dépense”
-- L’app reste fonctionnelle hors connexion
+<div align="center">
+  <strong>Réalisé dans le cadre d'un mini-projet Android</strong><br>
+  Jetpack Compose · Room · MVVM · Clean Architecture
+</div>

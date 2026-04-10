@@ -31,10 +31,8 @@ fun CategoryChip(
         },
         modifier = modifier.padding(end = 6.dp),
         colors   = FilterChipDefaults.filterChipColors(
-            // Chip sélectionné : indigo plein
             selectedContainerColor  = indigoPrimary,
             selectedLabelColor      = white,
-            // Chip non sélectionné : glassmorphism sur le bg bleu
             containerColor          = surfaceGlass,
             labelColor              = Color.Gray
         ),
